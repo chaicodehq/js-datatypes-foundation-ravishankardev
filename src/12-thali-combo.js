@@ -140,24 +140,24 @@ export function searchThaliMenu(thalis, query) {
   });
 }
 
-//  *   4. generateThaliReceipt(customerName, thalis)
+// *   4. generateThaliReceipt(customerName, thalis)
 //  *      - Template literals + .map() + .join("\n") + .reduce() se receipt banao
 //  *      - Format:
 //  *        "THALI RECEIPT\n---\nCustomer: {NAME}\n{line items}\n---\nTotal: Rs.{total}\nItems: {count}"
 //  *      - Line item: "- {thali name} x Rs.{price}"
 //  *      - customerName UPPERCASE mein
 //  *      - Agar customerName string nahi hai ya thalis array nahi hai/empty hai, return ""
-export function createThaliDescription(thali) {
-  if (typeof thali !== "object" || thali === null ||typeof thali.name !== "string" ||
-    typeof thali.type !== "string" ||!Array.isArray(thali.items) ||
-    typeof thali.price !== "number") {
+export function generateThaliReceipt(customerName, thalis) {
+  if (typeof customerName !== "string" || !Array.isArray(thalis) || thalis.length === 0) {
     return "";
   }
 
-  const name = thali.name.toUpperCase();
-  const type = thali.type;
-  const items = thali.items.join(", ");
-  const price = thali.price.toFixed(2);
+  const lineItems = thalis
+    .map(thali => `- ${thali.name} x Rs.${thali.price}`)
+    .join("\n");
 
-  return `${name} (${type}) - Items: ${items} - Rs.${price}`;
+  const total = thalis.reduce((sum, thali) => sum + thali.price, 0);
+
+  return `THALI RECEIPT---Customer: ${customerName.toUpperCase()}${lineItems}
+---Total: Rs.${total}Items: ${thalis.length}`;
 }
